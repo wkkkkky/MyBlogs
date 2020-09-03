@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+
+{# 标题 #}
+{% block title %}
+    <title>注册</title>
+{% endblock %}
+
+
+{# 注册表单 #}
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-12 col-sm-8 col-md-6 offset-sm-2 offset-md-3 px-xl-5">
+            <div class="card px-3 px-lg-4 mt-4" >
+                <div class="card-header text-center bg-white py-2">
+                    <h3 class="my-1 text-info">注册</h3>
+                </div>
+                <div class="card-body card-login">
+                    <form class="form-horizontal" method="post" action="{% url 'register' %}" name="register">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label for="register_email"></label>
+                            <input type="email" class="form-control" placeholder="邮箱" name="register_email" id="register_email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="register_name"></label>
+                            <input type="text" class="form-control" placeholder="用户名" name="register_name" id="register_name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="register_pwd1"></label>
+                            <input type="password" class="form-control" placeholder="密码" name="register_pwd1" id="register_pwd1" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="register_pwd2"></label>
+                            <input type="password" class="form-control" placeholder="确认密码" name="register_pwd2" id="register_pwd2" required>
+                        </div>
+                        <div class="form-group form-check ">
+                            <center>
+                                <input type="checkbox" class="form-check-input" id="exampleCheck1">
+                                <label class="form-check-label" for="exampleCheck1">Check me out</label>
+                            </center>
+                        </div>
+                        <div>
+                            <center><button type="submit" class="btn btn-primary">Submit</button></center>
+                        </div>
+                    </form>
+                </div>
+                <div class="text-center mb-5" id="social-login">
+                    <div class="login-title">
+                        <span>快速登录</span>
+                    </div>
+                    <div class="login-link">
+                        <a class="mx-4" href="#" title="社交账号登录有点慢，请耐心等候！"><i class="fa fa-weibo fa-2x"></i></a>
+                        <a class="mx-4" href="#" title="社交账号登录有点慢，请耐心等候！"><i class="fa fa-github fa-2x"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

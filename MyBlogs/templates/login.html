@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+{% block title %}
+    <title>登陆</title>
+{% endblock %}
+
+{% block content %}
+<!-- 登陆表单开始 -->
+<div class="container">
+    <div class="row">
+        <div class="col-12 col-sm-8 col-md-6 offset-sm-2 offset-md-3 px-xl-5" style="padding-top: 50px">
+            <div class="card px-3 px-lg-4">
+                <div class="card-header text-center bg-white py-2">
+                    <h3 class="my-1 text-info">登陆</h3>
+                </div>
+                <div class="card-body card-login">
+                    <form class="login" method="post" action="{% url 'login' %}" name="login">
+                        {%csrf_token%}
+                        <div class="div_id_login">
+                            <label for="login_email"></label>
+                            <div>
+                                <input type="email" id="login_email" class="form-control" placeholder="邮箱或用户名" name="login_email" value="{{ email }}" required autofocus>
+                            </div>
+                        </div>
+                        <div class="div_id_password">
+                            <label for="login_password"></label>
+                            <div>
+                                <input type="password" id="login_password" class="form-control" placeholder="密码" name="login_password" value="{{ pwd }}" required>
+                            </div>
+                        </div>
+                        <div class="checkbox mb-1">
+                            <center>
+                            <div class="div_id_remember mt-2">
+                                <input type="checkbox" id="remember" name="remember" value="remember-me">
+                                <label for="remember">记住我</label>
+                            </div>
+                            </center>
+                        </div>
+                        <div class="mt-1">
+                            <center><button class="btn btn-primary" type="submit">登陆</button></center>
+                        </div>
+
+                    </form>
+                </div>
+                <div class="text-center mb-5" id="social-login">
+                    <div class="login-title">
+                        <span>快速登录</span>
+                    </div>
+                    <div class="login-link">
+                        <a class="mx-4" href="#" title="社交账号登录有点慢，请耐心等候！"><i class="fa fa-weibo fa-2x"></i></a>
+                        <a class="mx-4" href="#" title="社交账号登录有点慢，请耐心等候！"><i class="fa fa-github fa-2x"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- 登陆表单结束 -->
+{% endblock %}

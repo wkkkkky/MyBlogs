@@ -1,0 +1,29 @@
+/* 鼠标悬停增加阴影效果 */
+.card:hover {
+    box-shadow: #ccc 0 5px 5px;
+    text-shadow: #ccc 0 5px 5px;
+}
+.card{
+    border-radius:5px
+}
+body{
+    background: #e2e3e5;
+    display: -webkit-flex; /* Safari */
+    display: flex;
+    min-height: 100vh;
+    flex-direction: column;
+}
+main{
+    flex: 1 0 auto;
+    background-color: #e2e3e5;
+}
+footer{
+    background: #e2e3e5;
+}
+.cate{color: #4e555b}
+.fa{color: #4e555b}
+.as{color: #4e555b}
+.header-a {
+    color: #28a745;
+    font-size: x-large;
+}
