@@ -1,0 +1,86 @@
+{%extends "account/base.html" %}
+{% load i18n %}
+{% load widget_tweaks %}
+{% load account socialaccount %}
+
+{% block content %}
+<!-- content -->
+
+    <div class="container">
+        <div class="row">
+            <div class="col-12 col-sm-8 col-md-6 offset-sm-2 offset-md-3 px-xl-5" style="padding-top: 50px">
+                <div class="card px-3 px-lg-4">
+                    <div class="card-header text-center bg-white py-2">
+                        <h3 class="my-1 text-info">登陆</h3>
+                    </div>
+                    <!-- novalidate临时禁用浏览器的验证功能 -->
+                    <div class="card-body card-login">
+                        <form class="login" method="POST" action="{% url 'account_login' %}" novalidate='novalidate'>
+                        {% csrf_token %}
+                        <!-- django form对隐藏元素遍历 -->
+                        {% for hidden in form.hidden_fields %}
+                        {{ hidden }}
+                        {% endfor %}
+                        <!-- django form对可见元素遍历 -->
+                        {% for field in form.visible_fields %}
+                        {% ifequal field.id_for_label 'id_remember' %}
+                        <!-- form验证密码的错误信息不属于字段信息，属于form信息，form.non_field_errors获取 -->
+                        <span class="help-block">{{ form.non_field_errors.0 }}</span>
+                        <div class="checkbox mb-1 text-center">
+                            <label for="{{ field.id_for_label }}">
+                                {{ field }}<small>记住我</small>
+                            </label>
+                            <span class="help-block">{{ field.errors.0 }}</span>
+                        </div>
+                        {% else %}
+                        <div class="form-group">
+                            <!-- 字段的“id”属性值及字段对应的<label>标签的文字-->
+                            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                            <!-- django 插件库 widget_tweaks设置样式-->
+                            {{ field|add_class:'form-control' }}
+                            {% for error in field.errors %}
+                            <span class="help-block">{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                        {% endifequal %}
+                        {% endfor %}
+                        {% if redirect_field_value %}
+                        <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+                        {% endif %}
+                        <div id='submit' class="mt-1 text-center">
+                            <button class="btn btn-primary" type="submit">登录</button>
+                        </div>
+                        <div class="text-center">
+                              <a class="button secondaryAction" href="{% url 'account_reset_password' %}">忘记密码？</a>
+                        </div>
+                    </form>
+                    </div>
+
+                    {% get_providers as socialaccount_providers %}
+                    {% if socialaccount_providers %}
+                    <div class="text-center mb-5" id="social-login">
+                        <div class="morelogin text-center">
+                            <span>更多登录方式</span>
+                        </div>
+                        <div class="text-center">
+                                <ul class="list-inline center-block moreloginlink text-center">
+                                    {% include "socialaccount/snippets/provider_list.html" with process="login" %}
+                                </ul>
+                        </div>
+                        {% include "socialaccount/snippets/login_extra.html" %}
+                        {% else %}
+                        <p>{% blocktrans %}If you have not created an account yet, then please
+                            <a href="{{ signup_url }}">sign up</a> first.{% endblocktrans %}</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+</div>
+{% if messages %} <div>
+    <strong>Messages:</strong>
+    {{messages.0}}
+</div>
+{% endif %}
+{% endblock %}

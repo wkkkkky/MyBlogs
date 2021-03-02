@@ -22,9 +22,9 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'a=jtj2(4p7*^k=j=#o-k(+9^ssi#+ft7^f(6fq+8@$elz50kx^'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 # Application definition
 
@@ -35,13 +35,27 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'MyBlogs',
     'mdeditor',
     'haystack',
+    # django-allauth必须安装的app
+    'django.contrib.sites',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    # 第三方账号相关，根据需求添加
+    # 'allauth.socialaccount.providers.weibo',
+    # 'allauth.socialaccount.providers.github',
+    # Django模板语言样式库
+    'widget_tweaks',
+    'MyBlogs',
+    'myaccount',
+    # 评论系统
+    'comment',
+    'ckeditor',
+    'mptt',
 ]
 
 MIDDLEWARE = [
-    'django.middleware.cache.UpdateCacheMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -49,7 +63,6 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'django.middleware.cache.FetchFromCacheMiddleware',
 ]
 
 ROOT_URLCONF = 'Blog_project.urls'
@@ -79,7 +92,7 @@ WSGI_APPLICATION = 'Blog_project.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'MyBlogs',
+        'NAME': 'myblogs',
         'HOST': '127.0.0.1',
         'PORT': '3306',
         'USER': 'root',
@@ -130,19 +143,21 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 CKEDITOR_UPLOAD_PATH = 'upload/'
 
-CACHES = {
-    'default': {
-        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
-    },
-    'redis': {
-        "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": "redis://127.0.0.1:6379/1",
-    }
-}
-
-CACHE_MIDDLEWARE_KEY_PREFIX = ''
-CACHE_MIDDLEWARE_SECONDS = 5
-CACHE_MIDDLEWARE_ALIAS = 'default'
+# 缓存设置
+# CACHES = {
+#     'default': {
+#         'BACKEND': 'django_redis.cache.RedisCache',
+#         "LOCATION": "redis://127.0.0.1:6379/1",
+#         "OPTIONS": {
+#             "CLIENT_CLASS": "django_redis.client.DefaultClient",
+#             "CONNECTION_POOL_KWARGS": {"max_connections": 100}
+#             # "PASSWORD": "密码",
+#         }
+#     }
+# }
+# CACHE_MIDDLEWARE_KEY_PREFIX = ''
+# CACHE_MIDDLEWARE_SECONDS = 600
+# CACHE_MIDDLEWARE_ALIAS = 'default'
 
 # 指定生成的索引路径
 HAYSTACK_CONNECTIONS = {
@@ -153,3 +168,157 @@ HAYSTACK_CONNECTIONS = {
 }
 # 实时生成索引文件
 HAYSTACK_SIGNAL_PROCESSOR = 'haystack.signals.RealtimeSignalProcessor'
+
+# 自定义用户model
+# AUTH_USER_MODEL = 'myaccount.Ouser'
+
+# django-allauth相关设置
+AUTHENTICATION_BACKENDS = (
+    # django admin所使用的用户登录与django-allauth无关
+    'django.contrib.auth.backends.ModelBackend',
+    # allauth 身份验证
+    'allauth.account.auth_backends.AuthenticationBackend',
+)
+
+# app django.contrib.sites需要的设置
+SITE_ID = 1
+# 指定要使用的登录方法(用户名、电子邮件地址两者之一)
+ACCOUNT_AUTHENTICATION_METHOD = 'username_email'
+# 要求用户注册时必须填写email
+ACCOUNT_EMAIL_REQUIRED = True
+# 注册中邮件验证方法: "强制(mandatory)"、 "可选(optional)" 或 "否(none)" 之一
+ACCOUNT_EMAIL_VERIFICATION = "none"
+# 设置登录和注册成功后重定向的页面，默认是/accounts/profile/
+LOGIN_REDIRECT_URL = "/"
+# 登出直接退出，不用确认
+ACCOUNT_LOGOUT_ON_GET = True
+# 设置默认的用户表
+AUTH_USER_MODEL = 'myaccount.User'
+
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
+
+# 自定义后台富文本编辑
+CKEDITOR_CONFIGS = {
+    # django-ckeditor默认使用default配置
+    'default': {
+        # 编辑器宽度自适应
+        'width': 'auto',
+        'height': '250px',
+        # tab键转换空格数
+        'tabSpaces': 4,
+        # 工具栏风格
+        'toolbar': 'Custom',
+        # 工具栏按钮
+        'toolbar_Custom': [
+            # 表情 代码块
+            ['Smiley', 'CodeSnippet'],
+            # 字体风格
+            ['Bold', 'Italic', 'Underline', 'RemoveFormat', 'Blockquote'],
+            # 字体颜色
+            ['TextColor', 'BGColor'],
+            # 链接
+            ['Link', 'Unlink'],
+            # 列表
+            ['NumberedList', 'BulletedList'],
+            # 最大化
+            ['Maximize']
+        ],
+        # 添加 Prism 相关插件
+        'extraPlugins': ','.join(['codesnippet', 'prism', 'widget', 'lineutils']),
+    }
+}
+
+# Django 3 修改了 xframe 的默认设置，即不支持 iframe 自己
+# 需要添加此项，否则无法跳出回复窗口
+X_FRAME_OPTIONS = 'SAMEORIGIN'
+
+# 日志配置
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+
+    # 格式化器，确定最终输出的形式和内容。
+    'formatters': {
+        'verbose': {
+            # 详细的格式化器，依次输出：消息级别、发生时间、抛出模块、进程ID、线程ID、提示信息
+            'format': '{levelname} {asctime} {module} {process:d} {thread:d} {message}',
+            'style': '{',
+        },
+        'simple': {
+            # 简要的格式化器，仅输出消息级别和提示信息
+            'format': '{levelname} {message}',
+            'style': '{',
+        },
+    },
+
+    # 过滤器。在日志记录从logger传到handler的过程中，使用Filter来做额外的控制
+    # 例如只允许某个特定来源的ERROR消息输出
+    'filters': {
+        'require_debug_true': {
+            # 使用此过滤器的消息仅在调试时才会生效
+            '()': 'django.utils.log.RequireDebugTrue',
+        },
+    },
+
+    # 处理器，主要功能是决定如何处理logger中每一条消息，
+    # 比如把消息输出到屏幕、文件或者Email中。
+    'handlers': {
+        'console': {
+            # 处理INFO以上级别消息，输出简要信息到命令行中；此处理器仅在调试模式生效
+            'level': 'INFO',
+            'filters': ['require_debug_true'],
+            'class': 'logging.StreamHandler',
+            'formatter': 'simple'
+        },
+        'mail_admins': {
+            # 处理ERROR以上级别消息，输出详细信息到Email中
+            # 需要配置Email
+            'level': 'ERROR',
+            'class': 'django.utils.log.AdminEmailHandler',
+            'formatter': 'verbose',
+        },
+        'file': {
+            # 处理WARNING以上级别消息，输出详细信息到文件中
+            'level': 'WARNING',
+            'class': 'logging.handlers.TimedRotatingFileHandler',
+            'when': 'midnight',
+            'backupCount': 30,
+            'filename': os.path.join(BASE_DIR, 'logs/debug.log'),
+            'formatter': 'verbose',
+        },
+    },
+
+    # 记录器，是日志系统的入口。它有三个重要的工作：
+    # 向应用程序（也就是你的项目）公开几种方法，以便运行时记录消息
+    # 根据传递给Logger的消息的严重性，确定出需要处理的消息
+    # 将需要处理的消息传递给所有感兴趣的处理器（Handler）
+    'loggers': {
+        'django': {
+            # 将django产生的所有消息转交给console处理器
+            'handlers': ['console'],
+            'propagate': True,
+        },
+        'django.request': {
+            # 将网络请求相关消息转交给file、mail_admins这两个处理器
+            'handlers': ['file', 'mail_admins'],
+            'level': 'WARNING',
+            # 使得此记录器处理过的消息就不再让django记录器再次处理
+            'propagate': False,
+        },
+    }
+}
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# SMTP服务器
+EMAIL_HOST = 'smtp.qq.com'
+# 邮箱名
+EMAIL_HOST_USER = '1339207590@qq.com'
+# 邮箱授权码
+EMAIL_HOST_PASSWORD = 'bbxcyfclhmeegdca'
+# 发送邮件的端口
+EMAIL_PORT = 25
+# 是否使用 TLS
+EMAIL_USE_TLS = True
+# 默认的发件人
+DEFAULT_FROM_EMAIL = '1339207590@qq.com'
+EMAIL_SUBJECT_PREFIX = '[哇咔咔哇咔的博客] '

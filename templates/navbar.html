@@ -1,0 +1,43 @@
+<nav class="navbar navbar-expand-lg navbar-light container-fluid bg-light ">
+    <a class="navbar-brand" href="{% url 'index' %}">MyBlogs</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+            {% if user.is_authenticated %}
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown"
+                   aria-haspopup="true" aria-expanded="false" title="{{ user.username }}，欢迎回来！">
+                    {% if msgnum > 0%}
+                    <span class="get-msg text-center">{{ msgnum }}</span>
+                    {% endif %}
+                    <img src="/media/avatar/default.png" alt="{{ user }}" class="img-circle" style="width: 30px;height: 30px;border-radius: 100%">
+                </a>
+                <div class="dropdown-menu dropdown-menu-left mt-0 rounded-0 border-0" aria-labelledby="navbarDropdown">
+                    <a class="dropdown-item pl-3" href="#"><i class="fa fa-fw fa-user text-info mr-2"></i>个人资料</a>
+                    {% if user.is_staff %}
+                    <a class="dropdown-item pl-3" href="{% url 'admin:index' %}">
+                        <i class="fa fa-fw fa-key text-info mr-2"></i>
+                        后台管理
+                    </a>
+                    {% endif %}
+                    <a class="dropdown-item pl-3" href="{% url 'account_logout' %}"><i
+                            class="fa fa-fw fa-sign-out text-info mr-2"></i>退出</a>
+                </div>
+            </li>
+            {% else %}
+                <li class="nav-item mr-2">
+                    <a class="nav-link py-md-3" href="{% url 'account_login' %}?next={{ request.path }}">登录</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link py-md-3" href="{% url 'account_signup' %}?next={{ request.path }}">注册</a>
+                </li>
+            {% endif %}
+        </ul>
+        <form class="form-inline my-2 my-lg-0" method="get" action="/search/">
+            <input class="form-control mr-sm-2" type="search" placeholder="搜索" name="q" aria-label="Search">
+            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+        </form>
+    </div>
+</nav>

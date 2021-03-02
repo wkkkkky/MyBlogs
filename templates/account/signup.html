@@ -1,0 +1,52 @@
+{%extends "base.html" %}
+{% load i18n %}
+{% load widget_tweaks %}
+
+{% block content %}
+<!-- content -->
+    <div class="container">
+        <div class="row">
+            <div class="col-12 col-sm-8 col-md-6 offset-sm-2 offset-md-3 px-xl-5">
+                <div class="card px-3 px-lg-4 mt-4" >
+                    <div class="card-header text-center bg-white py-2">
+                        <h3 class="my-1 text-info">注册</h3>
+                    </div>
+                    <div class="card-body card-login">
+                        <!-- novalidate临时禁用浏览器的验证功能 -->
+                        <form class="signup" id="signup_form" method="post" action="{% url 'account_signup' %}" novalidate='novalidate'>
+                            {% csrf_token %}
+                            <!-- django form对隐藏元素遍历 -->
+                            {% for hidden in form.hidden_fields %}
+                            {{ hidden }}
+                            {% endfor %}
+                            <!-- django form对可见元素遍历 -->
+                            {% for field in form.visible_fields %}
+                            <div class="form-group">
+                                <!-- 字段的“id”属性值及字段对应的<label>标签的文字-->
+                                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                                <!-- django 插件库 widget_tweaks设置样式-->
+                                {{ field|add_class:'form-control' }}
+                                <span class="help-block">{{ field.errors.0 }}</span>
+                            </div>
+                            {% endfor %}
+                            {% if redirect_field_value %}
+                            <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+                            {% endif %}
+                            <div id='submit' class="form-group text-center">
+                                <button  type="submit" class="btn btn-primary">注册</button>
+                                <p >
+                                   已有账号？请 <a href="{{ login_url }}">登录</a>
+                              </p>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% if messages %} <div>
+    <strong>Messages:</strong>
+    {{messages.0}}
+</div>
+{% endif %}
+{% endblock %}

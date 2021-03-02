@@ -17,9 +17,7 @@ from django.urls import path, include
 from . import views
 urlpatterns = [
     path('', views.index, name='index'),
-    path('login/', views.LoginView.as_view(), name='login'),
-    path('register/', views.register, name='register'),
-    path('article/<int:pk>/', views.article, name='article'),
+    path('article/<int:pk>/', views.article, name='article',),
     path('archive/<int:year>/<int:month>/', views.archive, name='archive'),
     path('category/<str:category>/', views.r_category, name='r_category'),
     path('search/', include('haystack.urls'), name='search'),

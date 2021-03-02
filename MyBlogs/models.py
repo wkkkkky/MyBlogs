@@ -1,22 +1,9 @@
 from django.db import models
+from django.urls import reverse
 from mdeditor.fields import MDTextField
 
 
 # Create your models here.
-# 用户信息
-class User(models.Model):
-    username = models.CharField(max_length=10, unique=True)
-    email = models.EmailField(unique=True)
-    password = models.CharField(max_length=15)
-    is_valid = models.BooleanField(default=True)
-
-    def __str__(self):
-        return u'%s' % self.username
-
-    class Meta:
-        ordering = ['id']
-        verbose_name_plural = u'用户'
-
 
 # 文章标签
 class Tag(models.Model):
@@ -51,9 +38,9 @@ class Article(models.Model):
     context = MDTextField(null=True, blank=True, verbose_name="博客内容")
     create_date = models.DateTimeField(auto_now_add=True, verbose_name="创建时间")
     update_date = models.DateTimeField(auto_now=True, verbose_name="更新时间")
-    is_valid = models.BooleanField(default=True)
-    watch_number = models.IntegerField(default=0, verbose_name="观看数")
+    watch_number = models.PositiveIntegerField(default=0, verbose_name="观看数")
     tag = models.ManyToManyField(Tag, verbose_name="博客标签")
+    is_valid = models.BooleanField(default=True)
 
     class Meta:
         ordering = ['-create_date']
@@ -74,24 +61,6 @@ class Article(models.Model):
         else:
             return self.context
 
-
-# 文章评论
-class Comment(models.Model):
-    reviewer = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="评论者")
-    article = models.ForeignKey(Article, on_delete=models.CASCADE, verbose_name="文章")
-    comment = models.CharField(max_length=300, verbose_name="评论")
-    create_date = models.DateTimeField(auto_now_add=True, verbose_name="创建时间")
-    is_valid = models.BooleanField(default=True)
-
-    def __str__(self):
-        return '%s' % self.comment[:10]
-
-    class Meta:
-        ordering = ['-id']
-        verbose_name_plural = '评论'
-
-    def profile(self):
-        if len(self.comment) > 10:
-            return "{}......".format(self.comment[:10])
-        else:
-            return self.comment
+    # 获取文章地址
+    def get_absolute_url(self):
+        return reverse('article', args=[self.id])

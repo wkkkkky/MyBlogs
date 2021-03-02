@@ -17,11 +17,16 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf.urls.static import static
 from django.conf import settings
+from django.views.generic import TemplateView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('accounts/', include('allauth.urls')),
     path('', include('MyBlogs.urls')),
-    path('mdeditor/', include('mdeditor.urls'))
+    path('mdeditor/', include('mdeditor.urls')),
+    path('timeline', TemplateView.as_view(template_name='timeline.html'), name="timeline"),
+    path('accounts/', include(('myaccount.urls', 'myaccount'), namespace='myaccount')),  # oauth,只展现一个用户登录界面
+    path('comment/', include(('comment.urls', 'comment'), namespace='comment'))
 ]
 
 if settings.DEBUG:
